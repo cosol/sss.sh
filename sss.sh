@@ -67,6 +67,9 @@ EOF
 #                      o analyze the running sql
 #                      o summary Proc/SessSO
 #                    some extension is removed temporarily 
+#   8. shunya.suzuki@cosol.jp     v2.0.1b    2017/11/29
+#      testing for 12cR2
+#      bug fix     - how to analysis Enqueue SO
 
 
 #===========================================================
@@ -779,8 +782,8 @@ ep=="sstree" && $0~"SO:.*, owner: " {
 /\(enqueue\) <no resource>/{next}
 /\(enqueue\) released/{next}
 /\(enqueue\) ..-.*-/{
-   tmp=$2
-   getline;getline;
+   tmp=MID($0,"enqueue) "," ")                              #fix-bug 2017/11/22
+   getline;if(length(Trim($0))==0) getline;getline;         #fix-bug 2017/11/22
    mode=Remove($2,",")
    if($0~"mode: " && $0~"req: "){                           #linked converter-Q
       _cevt= _cevt "(conversion)"
